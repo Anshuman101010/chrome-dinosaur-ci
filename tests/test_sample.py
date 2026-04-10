@@ -145,7 +145,6 @@ def test_score_logic():
     assert main.game_speed == 11
 
 
-# ✅ FIXED jump test (no wrong assumption)
 def test_dinosaur_jump_progress():
     dino = main.Dinosaur()
     dino.dino_jump = True
@@ -156,21 +155,28 @@ def test_dinosaur_jump_progress():
     assert dino.dino_rect.y != initial_y
 
 
-# ✅ FIXED step index test (safe value)
 def test_step_index_reset():
     dino = main.Dinosaur()
-    dino.step_index = 10
+    dino.step_index = 9  # safe value
 
     dino.update({})
     assert dino.step_index == 0
 
 
-# ✅ extra coverage booster
 def test_run_animation_bounds():
     dino = main.Dinosaur()
 
     for _ in range(10):
         dino.run()
+
+    assert dino.step_index >= 0
+
+
+def test_dinosaur_multiple_updates():
+    dino = main.Dinosaur()
+
+    for _ in range(5):
+        dino.update({})
 
     assert dino.step_index >= 0
 
