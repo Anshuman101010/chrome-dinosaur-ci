@@ -1,7 +1,7 @@
 import sys
 import os
 
-# Fix path BEFORE importing main
+# Fix import path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import main  # noqa: E402
@@ -34,10 +34,35 @@ def test_dinosaur_jump():
     assert dino.dino_rect.y < old_y
 
 
+def test_dinosaur_update_run():
+    dino = main.Dinosaur()
+    keys = {key: False for key in range(512)}
+    dino.update(keys)
+    assert dino.dino_run is True
+
+
+def test_dinosaur_update_jump():
+    dino = main.Dinosaur()
+    keys = {key: False for key in range(512)}
+    keys[main.pygame.K_UP] = True
+
+    dino.update(keys)
+    assert dino.dino_jump is True
+
+
 def test_cloud():
     cloud = main.Cloud()
     assert cloud.x > 0
     assert 50 <= cloud.y <= 100
+
+
+def test_cloud_update():
+    cloud = main.Cloud()
+    main.game_speed = 5
+
+    old_x = cloud.x
+    cloud.update()
+    assert cloud.x < old_x
 
 
 def test_small_cactus():
@@ -54,38 +79,13 @@ def test_bird():
     b = main.Bird()
     assert b.rect.y == 250
 
-def test_dinosaur_update_run():
-    dino = main.Dinosaur()
-    keys = {key: False for key in range(512)}  # fake keys
-    dino.update(keys)
-    assert dino.dino_run is True
-
-
-def test_dinosaur_update_jump():
-    dino = main.Dinosaur()
-    keys = {key: False for key in range(512)}
-    keys[main.pygame.K_UP] = True
-
-    dino.update(keys)
-    assert dino.dino_jump is True
-
-
-def test_cloud_update():
-    cloud = main.Cloud()
-    global game_speed
-    main.game_speed = 5
-
-    old_x = cloud.x
-    cloud.update()
-    assert cloud.x < old_x
-
 
 def test_obstacle_update_removal():
-    main.game_speed = 100  # fast move
+    main.game_speed = 100
     obstacle = main.SmallCactus()
     main.obstacles = [obstacle]
 
-    obstacle.rect.x = -100  # force off screen
+    obstacle.rect.x = -100
     obstacle.update()
 
     assert obstacle not in main.obstacles
@@ -95,8 +95,6 @@ def test_background_movement():
     main.game_speed = 5
     main.x_pos_bg = 0
 
-    # simulate background function
     main.x_pos_bg -= main.game_speed
 
     assert main.x_pos_bg == -5
-
