@@ -53,3 +53,50 @@ def test_large_cactus():
 def test_bird():
     b = main.Bird()
     assert b.rect.y == 250
+
+def test_dinosaur_update_run():
+    dino = main.Dinosaur()
+    keys = {key: False for key in range(512)}  # fake keys
+    dino.update(keys)
+    assert dino.dino_run is True
+
+
+def test_dinosaur_update_jump():
+    dino = main.Dinosaur()
+    keys = {key: False for key in range(512)}
+    keys[main.pygame.K_UP] = True
+
+    dino.update(keys)
+    assert dino.dino_jump is True
+
+
+def test_cloud_update():
+    cloud = main.Cloud()
+    global game_speed
+    main.game_speed = 5
+
+    old_x = cloud.x
+    cloud.update()
+    assert cloud.x < old_x
+
+
+def test_obstacle_update_removal():
+    main.game_speed = 100  # fast move
+    obstacle = main.SmallCactus()
+    main.obstacles = [obstacle]
+
+    obstacle.rect.x = -100  # force off screen
+    obstacle.update()
+
+    assert obstacle not in main.obstacles
+
+
+def test_background_movement():
+    main.game_speed = 5
+    main.x_pos_bg = 0
+
+    # simulate background function
+    main.x_pos_bg -= main.game_speed
+
+    assert main.x_pos_bg == -5
+
