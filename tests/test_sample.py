@@ -1,9 +1,10 @@
 import sys
 import os
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# Fix path BEFORE importing main
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-import main
+import main  # noqa: E402
 
 
 def test_dinosaur_init():
