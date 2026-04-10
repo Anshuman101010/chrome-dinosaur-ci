@@ -91,7 +91,7 @@ class Dinosaur:
             self.dino_rect.y -= self.jump_vel * 4
             self.jump_vel -= 0.8
 
-        # FIX: ensure jump completes within test loop
+        # Ensure jump completes within test loop
         if self.jump_vel < -8.5:
             self.dino_jump = False
             self.jump_vel = self.JUMP_VEL
@@ -104,7 +104,6 @@ class Cloud:
         self.width = 50
 
     def update(self):
-        global game_speed
         self.x -= game_speed
         if self.x < -self.width:
             self.x = SCREEN_WIDTH + random.randint(2500, 3000)
@@ -116,7 +115,6 @@ class Obstacle:
         self.rect = pygame.Rect(1100, 0, 40, 40)
 
     def update(self):
-        global game_speed
         self.rect.x -= game_speed
 
         if self.rect.x < -self.rect.width:
@@ -142,13 +140,9 @@ class Bird(Obstacle):
         self.rect.y = 250
 
     def update(self):
-        global game_speed
         self.rect.x -= game_speed
 
 
 def menu(death_count):
-    # Simple safe menu for CI
-    if death_count == 0:
-        return
-    else:
-        return
+    # Safe minimal function for CI
+    return
