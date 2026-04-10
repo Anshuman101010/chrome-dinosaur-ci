@@ -36,18 +36,22 @@ def test_dinosaur_jump():
 
 def test_dinosaur_update_run():
     dino = main.Dinosaur()
-    keys = {}
-
-    dino.update(keys)
+    dino.update({})
     assert dino.dino_run is True
 
 
 def test_dinosaur_update_jump():
     dino = main.Dinosaur()
     keys = {main.pygame.K_UP: True}
-
     dino.update(keys)
     assert dino.dino_jump is True
+
+
+def test_dinosaur_update_duck():
+    dino = main.Dinosaur()
+    keys = {main.pygame.K_DOWN: True}
+    dino.update(keys)
+    assert dino.dino_duck is True
 
 
 def test_cloud():
@@ -59,10 +63,19 @@ def test_cloud():
 def test_cloud_update():
     cloud = main.Cloud()
     main.game_speed = 5
-
     old_x = cloud.x
     cloud.update()
     assert cloud.x < old_x
+
+
+def test_cloud_multiple_updates():
+    cloud = main.Cloud()
+    main.game_speed = 5
+
+    for _ in range(5):
+        prev_x = cloud.x
+        cloud.update()
+        assert cloud.x <= prev_x
 
 
 def test_small_cactus():
@@ -80,6 +93,14 @@ def test_bird():
     assert b.rect.y == 250
 
 
+def test_bird_movement():
+    main.game_speed = 5
+    b = main.Bird()
+    old_x = b.rect.x
+    b.update()
+    assert b.rect.x < old_x
+
+
 def test_obstacle_update_removal():
     main.game_speed = 100
     obstacle = main.SmallCactus()
@@ -91,29 +112,60 @@ def test_obstacle_update_removal():
     assert obstacle not in main.obstacles
 
 
+def test_multiple_obstacles():
+    main.game_speed = 5
+
+    o1 = main.SmallCactus()
+    o2 = main.LargeCactus()
+    main.obstacles = [o1, o2]
+
+    for obs in main.obstacles:
+        old_x = obs.rect.x
+        obs.update()
+        assert obs.rect.x < old_x
+
+
 def test_background_movement():
     main.game_speed = 5
     main.x_pos_bg = 0
 
     main.x_pos_bg -= main.game_speed
-
     assert main.x_pos_bg == -5
 
 
-def test_score_increase():
-    main.points = 0
+def test_score_logic():
+    main.points = 99
     main.game_speed = 10
 
     main.points += 1
     if main.points % 100 == 0:
         main.game_speed += 1
 
-    assert main.points == 1
+    assert main.points == 100
+    assert main.game_speed == 11
+
+
+def test_dinosaur_jump_complete_cycle():
+    dino = main.Dinosaur()
+    dino.dino_jump = True
+
+    for _ in range(20):
+        dino.jump()
+
+    assert dino.dino_jump is False
+
+
+def test_step_index_reset():
+    dino = main.Dinosaur()
+    dino.step_index = 15
+
+    dino.update({})
+    assert dino.step_index == 0
 
 
 def test_menu_runs_once():
     try:
         main.menu(0)
     except Exception:
-        # pygame may fail in CI, that's acceptable
+        # pygame display may fail in CI
         assert True
