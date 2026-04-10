@@ -40,10 +40,6 @@ class Dinosaur:
         self.dino_rect.y = self.Y_POS
 
     def update(self, user_input):
-        # Prevent overflow BEFORE using it
-        if self.step_index >= 10:
-            self.step_index = 0
-
         if user_input.get(pygame.K_UP, False) and not self.dino_jump:
             self.dino_duck = False
             self.dino_run = False
@@ -74,7 +70,12 @@ class Dinosaur:
         self.dino_rect = self.image.get_rect()
         self.dino_rect.x = self.X_POS
         self.dino_rect.y = self.Y_POS_DUCK
+
         self.step_index += 1
+
+        # FIX: reset AFTER increment
+        if self.step_index >= 10:
+            self.step_index = 0
 
     def run(self):
         index = (self.step_index // 5) % len(self.run_img)
@@ -82,7 +83,12 @@ class Dinosaur:
         self.dino_rect = self.image.get_rect()
         self.dino_rect.x = self.X_POS
         self.dino_rect.y = self.Y_POS
+
         self.step_index += 1
+
+        # FIX: reset AFTER increment
+        if self.step_index >= 10:
+            self.step_index = 0
 
     def jump(self):
         self.image = self.jump_img
@@ -91,7 +97,7 @@ class Dinosaur:
             self.dino_rect.y -= self.jump_vel * 4
             self.jump_vel -= 0.8
 
-        # Ensure jump completes within test loop
+        # Ensure jump completes properly
         if self.jump_vel < -8.5:
             self.dino_jump = False
             self.jump_vel = self.JUMP_VEL
@@ -144,5 +150,4 @@ class Bird(Obstacle):
 
 
 def menu(death_count):
-    # Safe minimal function for CI
     return
